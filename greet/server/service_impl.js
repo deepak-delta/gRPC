@@ -38,3 +38,18 @@ exports.longGreet = (call, callback) => {
     callback(null, res)
   })
 }
+
+// Bidirectional Streaming RPC
+exports.greetEveryone = (call, _) => {
+  console.log('GreetEveryone was called')
+
+  call.on('data', (req) => {
+    console.log(`Received: ${req}`)
+    const res = new GreetResponse().setResult(`Hello ${req.getFirstname()}`)
+    console.log(`Sending: ${res}`)
+    call.write(res)
+  })
+  call.on('end', () => {
+    call.end()
+  })
+}

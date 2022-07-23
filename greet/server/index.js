@@ -1,3 +1,4 @@
+const fs = require('fs')
 const grpc = require('@grpc/grpc-js')
 const serviceImpl = require('./service_impl.js')
 const { GreetServiceService } = require('../proto/greet_grpc_pb.js')
@@ -13,7 +14,22 @@ const cleanup = (server) => {
 
 function main() {
   const server = new grpc.Server()
-  const creds = grpc.ServerCredentials.createInsecure()
+  const tls = true
+
+  if (tls) {
+    const rootCert = fs.readFileSync('./ssl/ca.crt')
+    const certChain = fs.readFileSync('./ssl/server.crt')
+    const privateKey = fs.readFileSync('./ssl/server.pem')
+
+    creds = grpc.ServerCredentials.createSsl(rootCert, [
+      {
+        cert_chain: certChain,
+        private_key: privateKey,
+      },
+    ])
+  } else {
+    creds = grpc.ServerCredentials.createInsecure()
+  }
 
   process.on('SIGINT', () => {
     console.log('Caught interrupt signal')

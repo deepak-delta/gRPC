@@ -6,7 +6,9 @@
   "scripts": {
     "pb:gen": "powershell -ExecutionPolicy unrestricted ./scripts/gen.ps1 greet",
     "greet:server":"node greet/server/index.js",
-    "greet:client":"node greet/client/index.js"
+    "greet:client":"node greet/client/index.js",
+
+    "ssl:gen": "cd ssl && powershell -ExecutionPolicy unrestricted ../scripts/ssl.ps1 && cd .."
 
   },
   "keywords": [],
