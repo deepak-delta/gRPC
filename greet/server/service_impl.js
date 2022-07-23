@@ -1,5 +1,6 @@
 const { GreetResponse } = require('../proto/greet_pb.js')
 
+//Unary RPC
 exports.greet = (call, callback) => {
   console.log('Greet was called')
   //   const req = call.request
@@ -9,6 +10,7 @@ exports.greet = (call, callback) => {
   callback(null, res)
 }
 
+// Server Streaming RPC
 exports.greetManyTimes = (call, _) => {
   console.log('GreetManyTimes was invoked')
   const res = new GreetResponse()
@@ -19,4 +21,20 @@ exports.greetManyTimes = (call, _) => {
   }
 
   call.end()
+}
+
+// Client Streaming RPC
+exports.longGreet = (call, callback) => {
+  console.log('LongGreet was called')
+
+  let greet = ''
+
+  call.on('data', (req) => {
+    greet += `Hello ${req.getFirstname()} \n`
+  })
+
+  call.on('end', () => {
+    const res = new GreetResponse().setResult(greet)
+    callback(null, res)
+  })
 }

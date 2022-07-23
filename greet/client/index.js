@@ -24,12 +24,32 @@ const doGreetManyTimes = (client) => {
   })
 }
 
+const doLongGreet = (client) => {
+  console.log('doLongGreet was called')
+  const names = ['John', 'Jane', 'Mary', 'Bob', 'Tom']
+  const call = client.longGreet((err, res) => {
+    if (err) {
+      console.log(err)
+      return
+    }
+    console.log(`LongGreet ${res.getResult()}`)
+  })
+
+  names
+    .map((name) => {
+      return new GreetRequest().setFirstname(name)
+    })
+    .forEach((req) => call.write(req))
+  call.end()
+}
+
 function main() {
   const creds = grpc.ChannelCredentials.createInsecure()
   const client = new GreetServiceClient('localhost:50051', creds)
 
   //doGreet(client)
-  doGreetManyTimes(client)
+  //doGreetManyTimes(client)
+  doLongGreet(client)
   client.close()
 }
 
