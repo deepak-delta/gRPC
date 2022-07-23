@@ -14,11 +14,22 @@ const doGreet = (client) => {
   })
 }
 
+const doGreetManyTimes = (client) => {
+  console.log('doGreetManyTimes was called')
+  const req = new GreetRequest().setFirstname('John')
+  const call = client.greetManyTimes(req)
+
+  call.on('data', (res) => {
+    console.log(`GreetManyTimes: ${res.getResult()}`)
+  })
+}
+
 function main() {
   const creds = grpc.ChannelCredentials.createInsecure()
   const client = new GreetServiceClient('localhost:50051', creds)
 
-  doGreet(client)
+  //doGreet(client)
+  doGreetManyTimes(client)
   client.close()
 }
 
